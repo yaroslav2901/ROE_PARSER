@@ -4,7 +4,7 @@
 
 ### Крок 1: Створіть service файл
 ```bash
-sudo nano /etc/systemd/system/ZTOE_PARSER.service
+sudo nano /etc/systemd/system/ROE_PARSER.service
 ```
 
 ### Крок 2: Вставте конфігурацію service
@@ -12,14 +12,14 @@ sudo nano /etc/systemd/system/ZTOE_PARSER.service
 Для постійно працюючого бота:
 ```ini
 [Unit]
-Description=ZTOE_PARSER
+Description=ROE_PARSER
 After=network.target
 
 [Service]
 Type=simple
 User=yaroslav
-WorkingDirectory=/home/yaroslav/bots/ZTOE_PARSER
-ExecStart=/bin/bash /home/yaroslav/bots/ZTOE_PARSER/run_main.sh
+WorkingDirectory=/home/yaroslav/bots/ROE_PARSER
+ExecStart=/bin/bash /home/yaroslav/bots/ROE_PARSER/run_main.sh
 Restart=always
 RestartSec=10
 Environment=PYTHONUNBUFFERED=1
@@ -31,14 +31,14 @@ WantedBy=multi-user.target
 Для періодичного запуску (з timer):
 ```ini
 [Unit]
-Description=ZTOE_PARSER
+Description=ROE_PARSER
 After=network.target
 
 [Service]
 Type=oneshot
 User=yaroslav
-WorkingDirectory=/home/yaroslav/bots/ZTOE_PARSER
-ExecStart=/bin/bash /home/yaroslav/bots/ZTOE_PARSER/run_main.sh
+WorkingDirectory=/home/yaroslav/bots/ROE_PARSER
+ExecStart=/bin/bash /home/yaroslav/bots/ROE_PARSER/run_main.sh
 Environment=PYTHONUNBUFFERED=1
 
 [Install]
@@ -54,7 +54,7 @@ WantedBy=multi-user.target
 
 ### Крок 1: Створіть timer файл
 ```bash
-sudo nano /etc/systemd/system/ZTOE_PARSER.timer
+sudo nano /etc/systemd/system/ROE_PARSER.timer
 ```
 
 ### Крок 2: Вставте конфігурацію timer
@@ -62,13 +62,13 @@ sudo nano /etc/systemd/system/ZTOE_PARSER.timer
 **Варіант 1: Запуск кожні 5 хвилин**
 ```ini
 [Unit]
-Description=ZTOE_PARSER Timer
-Requires=ZTOE_PARSER.service
+Description=ROE_PARSER Timer
+Requires=ROE_PARSER.service
 
 [Timer]
 OnBootSec=2min
 OnUnitActiveSec=5min
-Unit=ZTOE_PARSER.service
+Unit=ROE_PARSER.service
 
 [Install]
 WantedBy=timers.target
@@ -77,13 +77,13 @@ WantedBy=timers.target
 **Варіант 2: Запуск кожну годину**
 ```ini
 [Unit]
-Description=ZTOE_PARSER Timer
-Requires=ZTOE_PARSER.service
+Description=ROE_PARSER Timer
+Requires=ROE_PARSER.service
 
 [Timer]
 OnBootSec=2min
 OnUnitActiveSec=1h
-Unit=ZTOE_PARSER.service
+Unit=ROE_PARSER.service
 
 [Install]
 WantedBy=timers.target
@@ -92,13 +92,13 @@ WantedBy=timers.target
 **Варіант 3: Запуск щодня о 03:00**
 ```ini
 [Unit]
-Description=ZTOE_PARSER Timer
-Requires=ZTOE_PARSER.service
+Description=ROE_PARSER Timer
+Requires=ROE_PARSER.service
 
 [Timer]
 OnCalendar=daily
 OnCalendar=03:00
-Unit=ZTOE_PARSER.service
+Unit=ROE_PARSER.service
 
 [Install]
 WantedBy=timers.target
@@ -107,13 +107,13 @@ WantedBy=timers.target
 **Варіант 4: Запуск кожні 15 хвилин**
 ```ini
 [Unit]
-Description=ZTOE_PARSER Timer
-Requires=ZTOE_PARSER.service
+Description=ROE_PARSER Timer
+Requires=ROE_PARSER.service
 
 [Timer]
 OnBootSec=2min
 OnUnitActiveSec=15min
-Unit=ZTOE_PARSER.service
+Unit=ROE_PARSER.service
 
 [Install]
 WantedBy=timers.target
@@ -133,13 +133,13 @@ WantedBy=timers.target
 sudo systemctl daemon-reload
 
 # 2. Увімкніть автозапуск
-sudo systemctl enable ZTOE_PARSER.service
+sudo systemctl enable ROE_PARSER.service
 
 # 3. Запустіть service
-sudo systemctl start ZTOE_PARSER.service
+sudo systemctl start ROE_PARSER.service
 
 # 4. Перевірте статус
-sudo systemctl status ZTOE_PARSER.service
+sudo systemctl status ROE_PARSER.service
 ```
 
 ---
@@ -153,13 +153,13 @@ sudo systemctl status ZTOE_PARSER.service
 sudo systemctl daemon-reload
 
 # 2. Увімкніть timer (НЕ service!)
-sudo systemctl enable ZTOE_PARSER.timer
+sudo systemctl enable ROE_PARSER.timer
 
 # 3. Запустіть timer
-sudo systemctl start ZTOE_PARSER.timer
+sudo systemctl start ROE_PARSER.timer
 
 # 4. Перевірте статус timer
-sudo systemctl status ZTOE_PARSER.timer
+sudo systemctl status ROE_PARSER.timer
 
 # 5. Подивіться всі таймери
 sudo systemctl list-timers --all
@@ -172,37 +172,37 @@ sudo systemctl list-timers --all
 ### Основні команди
 ```bash
 # Запустити
-sudo systemctl start ZTOE_PARSER.service
+sudo systemctl start ROE_PARSER.service
 
 # Зупинити
-sudo systemctl stop ZTOE_PARSER.service
+sudo systemctl stop ROE_PARSER.service
 
 # Перезапустити
-sudo systemctl restart ZTOE_PARSER.service
+sudo systemctl restart ROE_PARSER.service
 
 # Перевірити статус
-sudo systemctl status ZTOE_PARSER.service
+sudo systemctl status ROE_PARSER.service
 
 # Увімкнути автозапуск
-sudo systemctl enable ZTOE_PARSER.service
+sudo systemctl enable ROE_PARSER.service
 
 # Вимкнути автозапуск
-sudo systemctl disable ZTOE_PARSER.service
+sudo systemctl disable ROE_PARSER.service
 ```
 
 ### Перегляд логів
 ```bash
 # Логи в реальному часі
-sudo journalctl -u ZTOE_PARSER.service -f
+sudo journalctl -u ROE_PARSER.service -f
 
 # Останні 100 рядків
-sudo journalctl -u ZTOE_PARSER.service -n 100
+sudo journalctl -u ROE_PARSER.service -n 100
 
 # Логи за сьогодні
-sudo journalctl -u ZTOE_PARSER.service --since today
+sudo journalctl -u ROE_PARSER.service --since today
 
 # Логи за останню годину
-sudo journalctl -u ZTOE_PARSER.service --since "1 hour ago"
+sudo journalctl -u ROE_PARSER.service --since "1 hour ago"
 ```
 
 ---
@@ -212,22 +212,22 @@ sudo journalctl -u ZTOE_PARSER.service --since "1 hour ago"
 ### Основні команди
 ```bash
 # Запустити timer
-sudo systemctl start ZTOE_PARSER.timer
+sudo systemctl start ROE_PARSER.timer
 
 # Зупинити timer
-sudo systemctl stop ZTOE_PARSER.timer
+sudo systemctl stop ROE_PARSER.timer
 
 # Перезапустити timer
-sudo systemctl restart ZTOE_PARSER.timer
+sudo systemctl restart ROE_PARSER.timer
 
 # Перевірити статус timer
-sudo systemctl status ZTOE_PARSER.timer
+sudo systemctl status ROE_PARSER.timer
 
 # Увімкнути автозапуск timer
-sudo systemctl enable ZTOE_PARSER.timer
+sudo systemctl enable ROE_PARSER.timer
 
 # Вимкнути автозапуск timer
-sudo systemctl disable ZTOE_PARSER.timer
+sudo systemctl disable ROE_PARSER.timer
 
 # Подивіться всі активні таймери
 sudo systemctl list-timers
@@ -239,13 +239,13 @@ sudo systemctl list-timers --all
 ### Перегляд логів timer
 ```bash
 # Логи timer
-sudo journalctl -u ZTOE_PARSER.timer -f
+sudo journalctl -u ROE_PARSER.timer -f
 
 # Логи service (що запускається timer'ом)
-sudo journalctl -u ZTOE_PARSER.service -f
+sudo journalctl -u ROE_PARSER.service -f
 
 # Обидва логи разом
-sudo journalctl -u ZTOE_PARSER.timer -u ZTOE_PARSER.service -f
+sudo journalctl -u ROE_PARSER.timer -u ROE_PARSER.service -f
 ```
 
 ---
@@ -256,17 +256,17 @@ sudo journalctl -u ZTOE_PARSER.timer -u ZTOE_PARSER.service -f
 
 ```bash
 # 1. Відредагуйте файл
-sudo nano /etc/systemd/system/ZTOE_PARSER.service
+sudo nano /etc/systemd/system/ROE_PARSER.service
 # або
-sudo nano /etc/systemd/system/ZTOE_PARSER.timer
+sudo nano /etc/systemd/system/ROE_PARSER.timer
 
 # 2. Обов'язково перезавантажте systemd
 sudo systemctl daemon-reload
 
 # 3. Перезапустіть service або timer
-sudo systemctl restart ZTOE_PARSER.service
+sudo systemctl restart ROE_PARSER.service
 # або
-sudo systemctl restart ZTOE_PARSER.timer
+sudo systemctl restart ROE_PARSER.timer
 ```
 
 ---
@@ -353,19 +353,19 @@ OnBootSec=10min    # Через 10 хвилин після завантажен�
 ### Перевірка перед запуском:
 ```bash
 # Перевірте, чи існує скрипт
-ls -la /home/yaroslav/bots/ZTOE_PARSER/run_main.sh
+ls -la /home/yaroslav/bots/ROE_PARSER/run_main.sh
 
 # Перевірте права на виконання
-chmod +x /home/yaroslav/bots/ZTOE_PARSER/run_main.sh
+chmod +x /home/yaroslav/bots/ROE_PARSER/run_main.sh
 
 # Запустіть скрипт вручну для тесту
-bash /home/yaroslav/bots/ZTOE_PARSER/run_main.sh
+bash /home/yaroslav/bots/ROE_PARSER/run_main.sh
 
 # Перевірте синтаксис service файлу
-sudo systemd-analyze verify /etc/systemd/system/ZTOE_PARSER.service
+sudo systemd-analyze verify /etc/systemd/system/ROE_PARSER.service
 
 # Перевірте синтаксис timer файлу
-sudo systemd-analyze verify /etc/systemd/system/ZTOE_PARSER.timer
+sudo systemd-analyze verify /etc/systemd/system/ROE_PARSER.timer
 ```
 
 ---
@@ -375,25 +375,25 @@ sudo systemd-analyze verify /etc/systemd/system/ZTOE_PARSER.timer
 ### Service не запускається:
 ```bash
 # Подивіться детальні логи помилок
-sudo journalctl -xe -u ZTOE_PARSER.service
+sudo journalctl -xe -u ROE_PARSER.service
 
 # Перевірте статус
-sudo systemctl status ZTOE_PARSER.service
+sudo systemctl status ROE_PARSER.service
 
 # Запустіть скрипт вручну від імені користувача
-su - yaroslav -c "bash /home/yaroslav/bots/ZTOE_PARSER/run_main.sh"
+su - yaroslav -c "bash /home/yaroslav/bots/ROE_PARSER/run_main.sh"
 ```
 
 ### Timer не спрацьовує:
 ```bash
 # Перевірте, чи timer активний
-sudo systemctl is-active ZTOE_PARSER.timer
+sudo systemctl is-active ROE_PARSER.timer
 
 # Подивіться, коли буде наступний запуск
-sudo systemctl list-timers --all | grep ZTOE_PARSER
+sudo systemctl list-timers --all | grep ROE_PARSER
 
 # Запустіть service вручну для тесту
-sudo systemctl start ZTOE_PARSER.service
+sudo systemctl start ROE_PARSER.service
 ```
 
 ### Загальні проблеми:
@@ -405,7 +405,7 @@ sudo systemctl daemon-reload
 ps aux | grep downloader
 
 # Перевірте права на файли
-ls -la /home/yaroslav/bots/ZTOE_PARSER/
+ls -la /home/yaroslav/bots/ROE_PARSER/
 ```
 
 ---
@@ -415,16 +415,16 @@ ls -la /home/yaroslav/bots/ZTOE_PARSER/
 ### Якщо потрібно видалити:
 ```bash
 # 1. Зупиніть і вимкніть timer
-sudo systemctl stop ZTOE_PARSER.timer
-sudo systemctl disable ZTOE_PARSER.timer
+sudo systemctl stop ROE_PARSER.timer
+sudo systemctl disable ROE_PARSER.timer
 
 # 2. Зупиніть і вимкніть service
-sudo systemctl stop ZTOE_PARSER.service
-sudo systemctl disable ZTOE_PARSER.service
+sudo systemctl stop ROE_PARSER.service
+sudo systemctl disable ROE_PARSER.service
 
 # 3. Видаліть файли
-sudo rm /etc/systemd/system/ZTOE_PARSER.service
-sudo rm /etc/systemd/system/ZTOE_PARSER.timer
+sudo rm /etc/systemd/system/ROE_PARSER.service
+sudo rm /etc/systemd/system/ROE_PARSER.timer
 
 # 4. Перезавантажте systemd
 sudo systemctl daemon-reload
@@ -468,26 +468,26 @@ OnFailure=status-email@%n.service
 
 ```bash
 # SERVICE
-sudo systemctl start ZTOE_PARSER.service      # Запустити
-sudo systemctl stop ZTOE_PARSER.service       # Зупинити
-sudo systemctl restart ZTOE_PARSER.service    # Перезапустити
-sudo systemctl status ZTOE_PARSER.service     # Статус
-sudo systemctl enable ZTOE_PARSER.service     # Автозапуск ON
-sudo systemctl disable ZTOE_PARSER.service    # Автозапуск OFF
+sudo systemctl start ROE_PARSER.service      # Запустити
+sudo systemctl stop ROE_PARSER.service       # Зупинити
+sudo systemctl restart ROE_PARSER.service    # Перезапустити
+sudo systemctl status ROE_PARSER.service     # Статус
+sudo systemctl enable ROE_PARSER.service     # Автозапуск ON
+sudo systemctl disable ROE_PARSER.service    # Автозапуск OFF
 
 # TIMER
-sudo systemctl start ZTOE_PARSER.timer        # Запустити
-sudo systemctl stop ZTOE_PARSER.timer         # Зупинити
-sudo systemctl restart ZTOE_PARSER.timer      # Перезапустити
-sudo systemctl status ZTOE_PARSER.timer       # Статус
-sudo systemctl enable ZTOE_PARSER.timer       # Автозапуск ON
-sudo systemctl disable ZTOE_PARSER.timer      # Автозапуск OFF
+sudo systemctl start ROE_PARSER.timer        # Запустити
+sudo systemctl stop ROE_PARSER.timer         # Зупинити
+sudo systemctl restart ROE_PARSER.timer      # Перезапустити
+sudo systemctl status ROE_PARSER.timer       # Статус
+sudo systemctl enable ROE_PARSER.timer       # Автозапуск ON
+sudo systemctl disable ROE_PARSER.timer      # Автозапуск OFF
 sudo systemctl list-timers                      # Список таймерів
 
 # СИСТЕМНІ
 sudo systemctl daemon-reload                    # Перезавантажити конфігурацію
-sudo journalctl -u ZTOE_PARSER.service -f    # Логи service
-sudo journalctl -u ZTOE_PARSER.timer -f      # Логи timer
+sudo journalctl -u ROE_PARSER.service -f    # Логи service
+sudo journalctl -u ROE_PARSER.timer -f      # Логи timer
 ```
 
 ---

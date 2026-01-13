@@ -1,7 +1,7 @@
 #!/bin/bash
 # ----------------- run_main.sh -----------------
 
-BASE_DIR="/home/yaroslav/bots/ZTOE_PARSER"
+BASE_DIR="/home/yaroslav/bots/ROE_PARSER"
 VENV_DIR="$BASE_DIR/venv"
 LOG_FILE="$BASE_DIR/logs/cron_main.log"
 LOG_DIR="$BASE_DIR/logs"
@@ -9,7 +9,7 @@ FULL_LOG_FILE="${LOG_DIR}/full_log.log"
 
 
 # --- Підготовка ---
-mkdir -p in out logs "$LOG_DIR" # створення директорій, якщо їх немає
+mkdir -p  out logs "$LOG_DIR" # створення директорій, якщо їх немає
 
 # Активуємо venv
 source "$VENV_DIR/bin/activate"

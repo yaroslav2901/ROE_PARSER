@@ -61,7 +61,7 @@ def send_error(text):
         url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
         data = {
             "chat_id": CHAT_ID,
-            "text": f"<b>ZTOE_PARSER</b>\n{text}",
+            "text": f"<b>ROE_PARSER</b>\n{text}",
             "parse_mode": "HTML"
         }
         requests.post(url, data=data)
@@ -79,7 +79,7 @@ def send_message(text):
         url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
         data = {
             "chat_id": CHAT_ID,
-            "text": f"<b>ZTOE_PARSER</b>\n{text}",
+            "text": f"<b>ROE_PARSER</b>\n{text}",
             "parse_mode": "HTML"
         }
         requests.post(url, data=data)

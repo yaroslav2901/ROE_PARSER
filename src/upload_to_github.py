@@ -7,8 +7,8 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 # ----------------- Налаштування -----------------
-REGION = "Zhytomyroblenergo"   # <<<<<<<<<<<<<<<<<< ОБЛЕНЕРГО
-BASE_DIR = "/home/yaroslav/bots/ZTOE_PARSER"
+REGION = "Rivneoblenergo"   # <<<<<<<<<<<<<<<<<< ОБЛЕНЕРГО
+BASE_DIR = "/home/yaroslav/bots/ROE_PARSER"
 
 SOURCE_JSON = os.path.join(BASE_DIR, "out", f"{REGION}.json")
 SOURCE_IMAGES = os.path.join(BASE_DIR, "out/images")

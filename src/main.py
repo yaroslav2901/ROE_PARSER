@@ -8,7 +8,7 @@ from telegram_notify import send_error, send_message, send_photo
 import gener_im_1_G
 import gener_im_full
 import upload_to_github
-import ztoe_parser
+import roe_parser
 from utils import clean_log, clean_old_files, delete_json
 
 LOG_DIR = "logs"
@@ -53,12 +53,12 @@ def send_schedule_photo(json_path: str, base_image_path: str = "out/images") -> 
         if date_count >= 2:
             # Є дві і більше дати (сьогодні + завтра)
             photo_path = os.path.join(base_image_path, "gpv-all-tomorrow.png")
-            caption = "🔄 <b>Житомиробленерго</b>\nГрафік на завтра\n#Житомиробленерго"
+            caption = "🔄 <b>Рівнеобленерго</b>\nГрафік на завтра\n#Рівнеобленерго"
             log("📸 Відправляю графік на ЗАВТРА (є 2+ дати)")
         else:
             # Тільки одна дата (сьогодні) або немає дат
             photo_path = os.path.join(base_image_path, "gpv-all-today.png")
-            caption = "🔄 <b>Житомиробленерго</b>\nГрафік на сьогодні\n#Житомиробленерго"
+            caption = "🔄 <b>Рівнеобленерго</b>\nГрафік на сьогодні\n#Рівнеобленерго"
             log("📸 Відправляю графік на СЬОГОДНІ (1 дата)")
         
         # Перевіряємо чи файл існує
@@ -89,12 +89,12 @@ def main():
     else:
         log("⚠️ Файла логів ще не існує — очищення пропущено")
 
-    json_path = "out/Zhytomyroblenergo.json" 
+    json_path = "out/Rivneoblenergo.json" 
 
     log("⚡ Запуск парсера…") 
     # Run the parser   
     try:
-        updated = asyncio.run(ztoe_parser.main())
+        updated = asyncio.run(roe_parser.main())
     except Exception as e:
         log(f"❌ Помилка парсера: {e}")
         send_error(f"❌ Помилка парсера: {e}")

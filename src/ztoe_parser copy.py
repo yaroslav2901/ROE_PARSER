@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# Parser for Zhytomyroblenergo (ZTOE) — version 4
+# Парсер для Житомиробленерго (ZTOE) — версія 4 (UA)
 # - правильний пошук <tr> для кожної підчерги
 # - визначення відключень по RGB
+# - усі логи українською
 
 import asyncio
 import re
@@ -11,6 +12,7 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from playwright.async_api import async_playwright
 import os
+from typing import Optional, Dict
 
 TZ = ZoneInfo("Europe/Kyiv")
 URL = "https://www.ztoe.com.ua/unhooking-search.php"
@@ -23,7 +25,7 @@ os.makedirs(LOG_DIR, exist_ok=True)
 os.makedirs("out", exist_ok=True)
 
 
-def log(message: str):
+def log(message: str) -> None:
     ts = datetime.now(TZ).strftime("%Y-%m-%d %H:%M:%S")
     line = f"{ts} [ztoe_parser_v4] {message}"
     print(line)
@@ -54,14 +56,14 @@ async def fetch_html() -> str:
 
         page = await context.new_page()
         try:
-            log(f"🌐 Opening {URL}")
+            log(f"🌐 Відкриваю сторінку {URL}")
             await page.goto(URL, wait_until="domcontentloaded", timeout=60000)
             await page.wait_for_selector("table", timeout=30000)
 
             await asyncio.sleep(2)
 
             html = await page.content()
-            log(f"✅ HTML loaded ({len(html)} bytes)")
+            log(f"✅ HTML завантажено ({len(html)} байт)")
             return html
         finally:
             await browser.close()
@@ -84,16 +86,14 @@ def is_blackout_color(hex_color: str) -> bool:
     return (r > 200 and g < 80 and b < 80)
 
 
-def extract_tr_for_group(table_html: str, subgroup: str) -> str | None:
+def extract_tr_for_group(table_html: str, subgroup: str) -> Optional[str]:
     """
     Повертає HTML одного <tr>, який містить підчергу (наприклад "1.1").
     Шукаємо серед усіх <tr> у таблиці.
     """
-    # Витягуємо всі <tr>...</tr>
     rows = re.findall(r'<tr[^>]*>.*?</tr>', table_html, re.DOTALL | re.IGNORECASE)
 
     for row in rows:
-        # Перевіряємо, чи є у цьому рядку текст підчерги
         # Можливі варіанти:
         #   >1.1<
         #   >1.1</b>
@@ -103,9 +103,9 @@ def extract_tr_for_group(table_html: str, subgroup: str) -> str | None:
     return None
 
 
-def parse_table(html: str, date_str: str) -> dict:
+def parse_table(html: str, date_str: str) -> Dict[str, Dict[str, str]]:
     """Парсить таблицю для конкретної дати."""
-    result: dict[str, dict[str, str]] = {}
+    result: Dict[str, Dict[str, str]] = {}
 
     date_pattern = re.escape(date_str)
 
@@ -116,7 +116,7 @@ def parse_table(html: str, date_str: str) -> dict:
         re.DOTALL | re.IGNORECASE
     )
     if not table_match:
-        log(f"⚠️ No table found for {date_str}")
+        log(f"⚠️ Таблицю для дати {date_str} не знайдено")
         return result
 
     table_html = table_match.group(0)
@@ -127,17 +127,18 @@ def parse_table(html: str, date_str: str) -> dict:
     rows = re.findall(row_pattern, table_html)
 
     if not rows:
-        log(f"⚠️ No subgroup rows found for {date_str}")
+        log(f"⚠️ Не знайдено жодної підчерги для дати {date_str}")
         return result
 
     for _pid, subgroup in rows:
         group_id = f"GPV{subgroup}"
+        # За замовчуванням вважаємо, що світло є всю добу
         result[group_id] = {str(h): "yes" for h in range(1, 25)}
 
         # 3. Витягуємо конкретний <tr> для цієї підчерги
         tr_html = extract_tr_for_group(table_html, subgroup)
         if not tr_html:
-            log(f"⚠️ {group_id}: <tr> not found")
+            log(f"⚠️ Не вдалося знайти рядок <tr> для {group_id}")
             continue
 
         # 4. Витягуємо кольори 48 слотів
@@ -148,7 +149,7 @@ def parse_table(html: str, date_str: str) -> dict:
         )
 
         if len(cells) < 48:
-            log(f"⚠️ {group_id}: found {len(cells)} slots, expected 48")
+            log(f"⚠️ {group_id} — знайдено {len(cells)} слотів, очікувалося 48")
             continue
 
         # Перетворюємо 48 півгодинних слотів на "yes"/"no"
@@ -176,14 +177,14 @@ def parse_table(html: str, date_str: str) -> dict:
 
             result[group_id][str(hour)] = state
 
-        log(f"✔️ {group_id}: parsed 48 slots")
+        log(f"✔️ {group_id} — оброблено 48 слотів")
 
     return result
 
 
 def parse_schedule(html: str):
     """Парсинг графіка на сьогодні і завтра."""
-    results: dict[str, dict] = {}
+    results: Dict[str, Dict] = {}
 
     today = datetime.now(TZ).date()
     tomorrow = today + timedelta(days=1)
@@ -195,32 +196,33 @@ def parse_schedule(html: str):
     )
     if update_match:
         hh, mm, dd, mm2, yyyy = update_match.groups()
-        update_info = f"{hh}:{mm} {dd}.{mm2}.{yyyy}"
-        log(f"🕒 Update time: {update_info}")
+        #update_info = f"{hh}:{mm} {dd}.{mm2}.{yyyy}"
+        update_info = f"{dd}.{mm2}.{yyyy} {hh}:{mm}"
+        log(f"🕒 Знайдено час оновлення: {update_info}")
     else:
         update_info = datetime.now(TZ).strftime("%H:%M %d.%m.%Y")
-        log(f"⚠️ Update time not found, using current: {update_info}")
+        log(f"⚠️ Час оновлення не знайдено, використовую поточний: {update_info}")
 
     # Обробляємо сьогодні + завтра
     for d in (today, tomorrow):
         date_str = d.strftime("%d.%m.%Y")
         ts = int(datetime(d.year, d.month, d.day, tzinfo=TZ).timestamp())
 
-        log(f"📅 Processing {date_str}")
+        log(f"📅 Обробляю дату: {date_str}")
         table = parse_table(html, date_str)
 
         if table:
             results[str(ts)] = table
-            log(f"✅ Added {len(table)} groups for {date_str}")
+            log(f"✅ Додано {len(table)} підчерг для дати {date_str}")
         else:
-            log(f"⚠️ No schedule for {date_str}")
+            log(f"⚠️ Немає графіка відключень на {date_str}")
 
     return results, update_info
 
 
-async def main():
+async def main() -> bool:
     log("=" * 60)
-    log("🚀 Starting ZTOE parser v4")
+    log("🚀 Запуск парсера Житомиробленерго (ZTOE) v4")
     log("=" * 60)
 
     try:
@@ -228,7 +230,7 @@ async def main():
         results, update_info = parse_schedule(html)
 
         if not results:
-            log("❌ No schedules parsed — stopping")
+            log("❌ Не вдалося розпарсити жодного графіка — завершую роботу")
             return False
 
         # DIFF — чи змінились дані?
@@ -238,7 +240,7 @@ async def main():
             old_data = old.get("fact", {}).get("data", {})
 
             if json.dumps(old_data, sort_keys=True) == json.dumps(results, sort_keys=True):
-                log("ℹ️ No changes detected → skipping write")
+                log("ℹ️ Дані не змінилися — пропускаю запис у JSON")
                 return False
 
         # Сортуємо дати
@@ -276,16 +278,16 @@ async def main():
             },
         }
 
-        log(f"💾 Writing JSON → {OUTPUT_FILE}")
+        log(f"💾 Записую JSON у файл → {OUTPUT_FILE}")
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
             json.dump(new_json, f, ensure_ascii=False, indent=2)
 
-        log("✅ JSON updated successfully")
+        log("✅ JSON успішно оновлено")
         log("=" * 60)
         return True
 
     except Exception as e:
-        log(f"❌ ERROR: {e}")
+        log(f"❌ Помилка: {e}")
         import traceback
         log(traceback.format_exc())
         return False
