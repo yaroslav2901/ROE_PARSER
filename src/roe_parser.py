@@ -138,6 +138,11 @@ def parse_schedule(html: str):
     results: Dict[str, Dict] = {}
     soup = BeautifulSoup(html, 'html.parser')
     
+    # Визначаємо вчорашню дату
+    today = datetime.now(TZ).date()
+    yesterday = today - timedelta(days=1)
+    log(f"📆 Сьогодні: {today.strftime('%d.%m.%Y')}, Вчора: {yesterday.strftime('%d.%m.%Y')}")
+    
     # Шукаємо час оновлення
     update_info = None
     update_text = soup.find(text=re.compile(r'Оновлено:'))
@@ -173,6 +178,18 @@ def parse_schedule(html: str):
             first_cell = cells[0].get_text(strip=True)
             # Перевіряємо чи це дата формату DD.MM.YYYY
             if re.match(r'\d{2}\.\d{2}\.\d{4}', first_cell):
+                # Перевіряємо чи це вчорашня дата
+                try:
+                    day, month, year = map(int, first_cell.split('.'))
+                    date_obj = datetime(year, month, day, tzinfo=TZ).date()
+                    
+                    if date_obj < today:
+                        log(f"⏭️ Пропускаю дату {first_cell} — це минула дата")
+                        continue
+                except ValueError:
+                    log(f"⚠️ Помилка парсингу дати: {first_cell}")
+                    continue
+                
                 # Перевіряємо чи немає статусу "Очікується"
                 row_text = row.get_text()
                 if 'Очікується' in row_text or 'очікується' in row_text.lower():
