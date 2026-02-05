@@ -220,9 +220,8 @@ def parse_schedule(html: str):
         subqueue_num = 1
         for i, cell in enumerate(cells[1:], start=1):
             time_str = cell.get_text(strip=True)
-            if not time_str or time_str == '':
-                continue
-            
+            #if not time_str or time_str == '':
+            #    continue    
             # Визначаємо номер черги і підчерги
             queue_num = ((i - 1) // 2) + 1
             sub_num = ((i - 1) % 2) + 1
@@ -238,14 +237,14 @@ def parse_schedule(html: str):
             else:
                 # Якщо немає відключень - весь день світло
                 results[str(ts)][group_id] = {str(h): "yes" for h in range(1, 25)}
-                log(f"✔️ {group_id} — без відключень")
-    
+                log(f"✔️ {group_id} — без відключень")        
+        
     return results, update_info
 
 
 async def main() -> bool:
     log("=" * 60)
-    log("🚀 Запуск парсера Рівнеобленерго (ROE) v1")
+    log("🚀 Запуск парсера Рівнеобленерго")
     log("=" * 60)
 
     try:
